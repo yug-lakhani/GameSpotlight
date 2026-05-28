@@ -41,9 +41,10 @@ services:
         value: https://qdohwmucmbjsotaibsbh.supabase.co
       - key: STORAGE_SUPABASE_KEY
         fromSecret: SUPABASE_SERVICE_ROLE_KEY
-    disks:
-      - path: /app/files
-        size_gb: 10
+    disk:
+      name: storage-files
+      mountPath: /app/files
+      sizeGB: 10
 
   - type: pserv
     name: auth-user-service
