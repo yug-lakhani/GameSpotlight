@@ -18,12 +18,11 @@ services:
       - key: AUTH_SERVICE_HOST
         value: auth-user-service.internal:8087
 
-  - type: web
+  - type: pserv
     name: game-service
     env: docker
     dockerfilePath: services/game-service/Dockerfile
     plan: starter
-    internal: true
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
@@ -32,12 +31,11 @@ services:
       - key: AUTH_USER_SERVICE_URL
         value: http://auth-user-service.internal:8087/api
 
-  - type: web
+  - type: pserv
     name: storage-service
     env: docker
     dockerfilePath: services/storage-service/Dockerfile
     plan: starter
-    internal: true
     envVars:
       - key: STORAGE_SUPABASE_URL
         value: https://qdohwmucmbjsotaibsbh.supabase.co
@@ -47,22 +45,20 @@ services:
       - path: /app/files
         size_gb: 10
 
-  - type: web
+  - type: pserv
     name: auth-user-service
     env: docker
     dockerfilePath: services/auth-user-service/Dockerfile
     plan: starter
-    internal: true
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
 
-  - type: web
+  - type: pserv
     name: purchase-service
     env: docker
     dockerfilePath: services/purchase-service/Dockerfile
     plan: starter
-    internal: true
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
@@ -71,22 +67,20 @@ services:
       - key: GAME_SERVICE_URL
         value: http://game-service.internal:8082/api
 
-  - type: web
+  - type: pserv
     name: wishlist-service
     env: docker
     dockerfilePath: services/wishlist-service/Dockerfile
     plan: starter
-    internal: true
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
 
-  - type: web
+  - type: pserv
     name: notification-service
     env: docker
     dockerfilePath: services/notification-service/Dockerfile
     plan: starter
-    internal: true
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
