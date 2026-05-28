@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  gateway:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile.nginx
+    image: gateway:dev
+    environment:
+      GAME_SERVICE_HOST: "game-service:8082"
+      PURCHASE_SERVICE_HOST: "purchase-service:8083"
+      WISHLIST_SERVICE_HOST: "wishlist-service:8084"
+      NOTIFICATION_SERVICE_HOST: "notification-service:8085"
+      AUTH_SERVICE_HOST: "auth-user-service:8087"
+      STORAGE_SERVICE_HOST: "storage-service:8086"
+    ports:
+      - "8080:80"
+    # If you run backend services in this compose, add them and
+    # set depends_on accordingly. This file targets gateway only.

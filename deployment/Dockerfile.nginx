@@ -1,0 +1,29 @@
+FROM nginx:stable-alpine
+
+# We avoid installing extra packages during build to keep the image small and
+# to avoid network issues with APK/TLS during builds. The entrypoint script
+# will perform a simple POSIX variable expansion to generate the final
+# /etc/nginx/nginx.conf from the template.
+
+# Copy the nginx conf template into the image. Build from the repo root so
+# the path `services/nginx/nginx.conf.template` is available to the Docker
+# daemon.
+# Copy nginx template and entrypoint from services/nginx so all nginx-related
+# files live together. Build context should be the repository root.
+COPY services/nginx/nginx.conf.template /etc/nginx/nginx.conf.template
+
+# Copy entrypoint script from services/nginx (consolidated location)
+COPY services/nginx/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Ensure the entrypoint has Unix line endings in case the repo or host
+# converted files to CRLF. This prevents '/bin/sh\r: bad interpreter' or
+# 'no such file or directory' errors when executing the script inside the
+# Linux container.
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh || true
+
+EXPOSE 80
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
+# Simple healthcheck for Docker/Render
+HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 CMD wget -qO- http://localhost/_health || exit 1

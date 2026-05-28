@@ -1,0 +1,17 @@
+HTTP/1.1 400 Bad Request
+Date: Mon, 18 May 2026 19:13:06 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 76
+Connection: keep-alive
+CF-Ray: 9fdd2d5ea99c0058-BOM
+CF-Cache-Status: MISS
+Access-Control-Allow-Origin: *
+Server: cloudflare
+sb-gateway-mode: direct
+sb-gateway-version: 1
+sb-project-ref: qdohwmucmbjsotaibsbh
+sb-request-id: 019e3c81-972a-7f7b-bd47-efc912a4a616
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+set-cookie: __cf_bm=egGPoJsTiqqmSh_d6ut5PhVXF84ZD1pGTsxVr3OiqMs-1779131586.3422823-1.0.1.1-1_lSnE_wCKZFIfIusZJ6g9d9a.l2vs0zPQLFwmwe_BJWdAsil4VFESv5mxN0AnZ6Jl5Pv4RhEAwEvkH4dOKibA.2laSG8HCNpkRw15CUlwYjykspkk1KM6ZxnPVhYKDD; HttpOnly; SameSite=None; Secure; Path=/; Domain=supabase.co; Expires=Mon, 18 May 2026 19:43:06 GMT
+alt-svc: h3=":443"; ma=86400
+

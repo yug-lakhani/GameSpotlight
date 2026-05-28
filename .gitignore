@@ -1,0 +1,50 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# Server local properties
+server/src/main/resources/application-local.properties
+server/src/test/resources/application-local.properties
+
+# Environment file (copy from .env.example)
+.env
+services/.env.production
+
+# Frontend dependencies and build output
+client/node_modules/
+client/dist/
+
+# Ignore all per-service .env files and local envs
+**/.env
+**/*.env.local
+vm.env.local

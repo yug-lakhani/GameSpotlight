@@ -1,0 +1,40 @@
+name: Flyway Migrations
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    name: Run Flyway migrations (auth-user & purchase)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Run Flyway migrate for auth-user-service
+        env:
+          FLYWAY_URL: ${{ secrets.AUTH_DB_URL }}
+          FLYWAY_USER: ${{ secrets.AUTH_DB_USER }}
+          FLYWAY_PASSWORD: ${{ secrets.AUTH_DB_PASSWORD }}
+        run: |
+          echo "Running Flyway migrate for auth-user-service"
+          mvn -f services/auth-user-service/pom.xml -Dflyway.url="$FLYWAY_URL" -Dflyway.user="$FLYWAY_USER" -Dflyway.password="$FLYWAY_PASSWORD" -DskipTests flyway:migrate
+
+      - name: Run Flyway migrate for purchase-service
+        env:
+          FLYWAY_URL: ${{ secrets.PURCHASE_DB_URL }}
+          FLYWAY_USER: ${{ secrets.PURCHASE_DB_USER }}
+          FLYWAY_PASSWORD: ${{ secrets.PURCHASE_DB_PASSWORD }}
+        run: |
+          echo "Running Flyway migrate for purchase-service"
+          mvn -f services/purchase-service/pom.xml -Dflyway.url="$FLYWAY_URL" -Dflyway.user="$FLYWAY_USER" -Dflyway.password="$FLYWAY_PASSWORD" -DskipTests flyway:migrate
+
+# Required repository secrets (set in GitHub):
+# - AUTH_DB_URL, AUTH_DB_USER, AUTH_DB_PASSWORD
+# - PURCHASE_DB_URL, PURCHASE_DB_USER, PURCHASE_DB_PASSWORD

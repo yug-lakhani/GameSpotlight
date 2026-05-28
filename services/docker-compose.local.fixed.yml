@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "8080:80"
+    environment:
+      - GAME_SERVICE_HOST=game-service:8082
+      - STORAGE_SERVICE_HOST=storage-service:8085
+      - AUTH_SERVICE_HOST=auth-user-service:8087
+    depends_on:
+      - game-service
+      - storage-service
+      - auth-user-service
+
+  game-service:
+    build: ./game-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
+  storage-service:
+    build: ./storage-service
+    volumes:
+      - ./storage-files:/app/files
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
+  auth-user-service:
+    build: ./auth-user-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev

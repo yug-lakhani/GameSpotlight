@@ -1,0 +1,44 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth
+          uri: ${AUTH_SERVICE_URL:http://localhost:8087}
+          predicates:
+            - Path=/api/auth/**,/api/users/**
+
+        - id: game
+          uri: ${GAME_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/games/**
+
+        - id: purchase
+          uri: ${PURCHASE_SERVICE_URL:http://localhost:8083}
+          predicates:
+            - Path=/api/purchases/**
+
+        - id: wishlist
+          uri: ${WISHLIST_SERVICE_URL:http://localhost:8084}
+          predicates:
+            - Path=/api/wishlist/**,/api/user/wishlist/**
+
+        - id: storage
+          uri: ${STORAGE_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=/api/storage/**
+
+      default-filters:
+        - RemoveRequestHeader=Cookie
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

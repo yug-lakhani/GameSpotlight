@@ -1,0 +1,156 @@
+# Docker Compose for local development of the microservices.
+# MongoDB is hosted on Atlas, so each service reads its Atlas connection string from its .env file.
+
+services:
+  auth-user:
+    build:
+      context: ./auth-user-service
+    env_file:
+      - ./auth-user-service/.env
+    volumes:
+      - ./auth-user-service/ca/aiven-ca.pem:/app/ca/aiven-ca.pem:ro
+    dns:
+      - 8.8.8.8
+    environment:
+      PORT: 8087
+      JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
+    ports:
+      - "8087:8087"
+
+  nginx:
+    build:
+      context: ./nginx
+    environment:
+      PORT: 8080
+      AUTH_SERVICE_HOST: auth-user:8087
+      GAME_SERVICE_HOST: game:8082
+      PURCHASE_SERVICE_HOST: purchase:8083
+      WISHLIST_SERVICE_HOST: wishlist:8084
+      NOTIFICATION_SERVICE_HOST: notification:8086
+      STORAGE_SERVICE_HOST: storage:8085
+    depends_on:
+      - auth-user
+      - game
+      - purchase
+      - wishlist
+      - notification
+      - storage
+    ports:
+      - "8080:80"
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_AUTH_API_ROOT: http://localhost:8080/api
+      VITE_GAME_API_ROOT: http://localhost:8080/api
+      VITE_PURCHASE_API_ROOT: http://localhost:8080/api
+      VITE_WISHLIST_API_ROOT: http://localhost:8080/api
+      VITE_STORAGE_API_ROOT: http://localhost:8080/api
+      # Frontend should use the auth Supabase project for login/session flows.
+      VITE_SUPABASE_URL: ${AUTH_SUPABASE_URL}
+      VITE_SUPABASE_ANON_KEY: ${AUTH_SUPABASE_ANON_KEY}
+    volumes:
+      - ../client:/app
+      - frontend-node-modules:/app/node_modules
+    ports:
+      - "5173:5173"
+    # Frontend will route API calls through nginx during local testing (see docker-compose.local.yml)
+
+  game:
+    build:
+      context: ./game-service
+    env_file:
+      - ./game-service/.env
+    dns:
+      - 8.8.8.8
+    environment:
+      STORAGE_SERVICE_URL: http://storage:8085/api
+      AUTH_USER_SERVICE_URL: http://auth-user:8087/api
+      OPENSEARCH_ENABLED: "true"
+      OPENSEARCH_SYNC_ENABLED: "true"
+      SPRING_KAFKA_PROPERTIES_SSL_TRUSTSTORE_LOCATION: /app/config/aiven-broker-cert.pem
+      JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./game-service/src/main/resources/aiven-broker-cert.pem:/app/config/aiven-broker-cert.pem:ro
+
+  purchase:
+    build:
+      context: ./purchase-service
+    env_file:
+      - ./purchase-service/.env
+    dns:
+      - 8.8.8.8
+    environment:
+      AUTH_USER_SERVICE_URL: http://auth-user:8087/api
+      GAME_SERVICE_URL: http://game:8082/api
+      SPRING_KAFKA_PROPERTIES_SSL_TRUSTSTORE_LOCATION: /app/config/aiven-broker-cert.pem
+      JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./purchase-service/src/main/resources/aiven-broker-cert.pem:/app/config/aiven-broker-cert.pem:ro
+      - ./auth-user-service/ca/aiven-ca.pem:/app/ca/aiven-ca.pem:ro
+
+  notification:
+    build:
+      context: ./notification-service
+    env_file:
+      - ./notification-service/.env
+    dns:
+      - 8.8.8.8
+    environment:
+      APP_KAFKA_LISTENERS_ENABLED: "true"
+      AUTH_USER_SERVICE_URL: http://auth-user:8087/api
+      GAME_SERVICE_URL: http://game:8082/api
+      SPRING_KAFKA_PROPERTIES_SSL_TRUSTSTORE_LOCATION: /app/config/aiven-broker-cert.pem
+      JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./game-service/src/main/resources/aiven-broker-cert.pem:/app/config/aiven-broker-cert.pem:ro
+    depends_on:
+      - auth-user
+      - game
+      - purchase
+
+  wishlist:
+    build:
+      context: ./wishlist-service
+    env_file:
+      - ./wishlist-service/.env
+    dns:
+      - 8.8.8.8
+    environment:
+      JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
+    ports:
+      - "8084:8084"
+
+  storage:
+    build:
+      context: ./storage-service
+    env_file:
+      - ./storage-service/.env
+    dns:
+      - 8.8.8.8
+    ports:
+      - "8085:8085"
+    volumes:
+      - ./storage-files:/app/files
+
+
+
+volumes:
+  frontend-node-modules:
+
+# Usage:
+# 1. Copy each service's `.env.example` to `.env` and set the Atlas MongoDB URI.
+# 2. From `services/` run:
+#
+#    docker compose up --build
+
+# Local bind mount used for storage files during development.
+#

@@ -1,0 +1,10 @@
+[ {
+  "id" : "da2ccfe3-2a41-487f-99d4-648899ae150e",
+  "fileName" : "test-upload.txt",
+  "fileType" : "text/plain",
+  "fileSize" : 14,
+  "filePath" : "https://qdohwmucmbjsotaibsbh.supabase.co/storage/v1/object/public/game-files/da2ccfe3-2a41-487f-99d4-648899ae150e.txt",
+  "uploadedBy" : "test-user",
+  "uploadedAt" : "2026-05-18T18:55:12.718973820",
+  "url" : "https://qdohwmucmbjsotaibsbh.supabase.co/storage/v1/object/public/game-files/da2ccfe3-2a41-487f-99d4-648899ae150e.txt"
+} ]

@@ -1,0 +1,18 @@
+# Example application.properties for notification-service
+# Copy to application.properties and set real values via environment variables
+
+spring.application.name=notification-service
+server.port=8086
+
+spring.kafka.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVERS}
+spring.kafka.consumer.group-id=notification-service
+spring.kafka.properties.security.protocol=${KAFKA_SECURITY_PROTOCOL}
+spring.kafka.properties.sasl.mechanism=${KAFKA_SASL_MECHANISM}
+spring.kafka.properties.sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_API_KEY}" password="${KAFKA_API_SECRET}";
+
+spring.mail.host=${BREVO_SMTP_HOST}
+spring.mail.port=${BREVO_SMTP_PORT}
+spring.mail.username=${BREVO_SMTP_USERNAME}
+spring.mail.password=${BREVO_SMTP_PASSWORD}
+
+app.mail.from-address=${MAIL_FROM_ADDRESS}
