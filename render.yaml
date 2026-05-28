@@ -40,7 +40,7 @@ services:
       - key: STORAGE_SUPABASE_URL
         value: https://qdohwmucmbjsotaibsbh.supabase.co
       - key: STORAGE_SUPABASE_KEY
-        fromSecret: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
     disk:
       name: storage-files
       mountPath: /app/files
